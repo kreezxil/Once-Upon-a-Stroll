@@ -9,7 +9,7 @@ import org.apache.commons.lang3.tuple.Pair;
 public class StrollConfig {
     private static ForgeConfigSpec.ConfigValue<Boolean> v_pathPlayers;
     private static ForgeConfigSpec.ConfigValue<Boolean> v_pathMobs;
-    //private static ForgeConfigSpec.ConfigValue<Boolean> v_pathPassives;
+    private static ForgeConfigSpec.ConfigValue<Boolean> v_fullPaths;
 
     private static ForgeConfigSpec.ConfigValue<Double> v_player_upperLimit;
     private static ForgeConfigSpec.ConfigValue<Double> v_player_lowerLimit;
@@ -29,6 +29,7 @@ public class StrollConfig {
 
     public static boolean pathPlayers = true;
     public static boolean pathMobs = false;
+    public static boolean fullPaths = false;
 
     public static double player_upperLimit =1000.0D;
     public static double player_lowerLimit =1.0D;
@@ -54,6 +55,7 @@ public class StrollConfig {
     public static void load() {
         pathPlayers = v_pathPlayers.get();
         pathMobs = v_pathMobs.get();
+        fullPaths = v_fullPaths.get();
 
         player_upperLimit = v_player_upperLimit.get();
         player_lowerLimit = v_player_lowerLimit.get();
@@ -79,8 +81,8 @@ public class StrollConfig {
         public Loader(ForgeConfigSpec.Builder builder) {
             builder.push("General Booleans"); //category
             v_pathPlayers = (ForgeConfigSpec.ConfigValue<Boolean>)builder.comment("Should player paths render?").define("v_pathPlayers",StrollConfig.pathPlayers);
-            builder.comment("Enabling mob path rendering can lag your world!");
-            v_pathMobs = (ForgeConfigSpec.ConfigValue<Boolean>)builder.comment("Should mob paths render?").define("v_pathMobs",StrollConfig.pathMobs);
+            v_pathMobs = (ForgeConfigSpec.ConfigValue<Boolean>)builder.comment("Should mob paths render? This can lag your world").define("v_pathMobs",StrollConfig.pathMobs);
+            v_fullPaths = (ForgeConfigSpec.ConfigValue<Boolean>)builder.comment("Should paths be more than dirt and thus permanent") .define("v_fullPaths",StrollConfig.fullPaths);
             builder.pop();
 
             builder.push("Player Paths");

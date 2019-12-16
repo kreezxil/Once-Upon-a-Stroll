@@ -25,8 +25,7 @@ import org.apache.logging.log4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("onceuponastroll")
-public class OnceUponaStroll
-{
+public class OnceUponaStroll {
     private static final Logger LOGGER = LogManager.getLogger();
 
     public OnceUponaStroll() {
@@ -37,82 +36,81 @@ public class OnceUponaStroll
         StrollConfig.init();
     }
 
-    private void setup(final FMLCommonSetupEvent event)
-    {
+    private void setup(final FMLCommonSetupEvent event) {
         StrollConfig.load();
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
     }
 
-    private void enqueueIMC(final InterModEnqueueEvent event)
-    {
+    private void enqueueIMC(final InterModEnqueueEvent event) {
     }
 
-    private void processIMC(final InterModProcessEvent event)
-    {
+    private void processIMC(final InterModProcessEvent event) {
     }
 
     @SubscribeEvent
     public void onServerStarting(FMLServerStartingEvent event) {
     }
 
-    @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
+    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class MakePath {
-        @SubscribeEvent
-        public static void makeMobPath(LivingEvent event) {
+        private static void generatePath(Entity player) {
+            BlockPos entityLocation = new BlockPos(player.posX, player.posY + player.getYOffset(), player.posZ);
+            World world = player.getEntityWorld();
+            BlockState state = world.getBlockState(entityLocation);
+            Block block = state.getBlock();
 
-            if (event.getEntityLiving() != null && StrollConfig.pathMobs) {
-                Entity player = event.getEntityLiving();
-                BlockPos entityLocation = new BlockPos(player.posX,player.posY+player.getYOffset(), player.posZ);
-                World world = player.getEntityWorld();
-                BlockState state = world.getBlockState(entityLocation);
-                Block block = state.getBlock();
+            double random = Math.random() * StrollConfig.mob_upperLimit + StrollConfig.mob_lowerLimit;
 
-                double random =  Math.random() * StrollConfig.mob_upperLimit + StrollConfig.mob_lowerLimit;
-
-                if (!world.isRemote && (Math.abs(player.getMotion().getX()) > 0.0D || Math.abs(player.getMotion().getY()) > 0.0D || Math.abs(player.getMotion().getZ()) > 0.0D)) {
+            if (!world.isRemote && (Math.abs(player.getMotion().getX()) > 0.0D || Math.abs(player.getMotion().getY()) > 0.0D || Math.abs(player.getMotion().getZ()) > 0.0D)) {
 
 
-                    if (block == Blocks.GRASS_BLOCK)
-                    {
-                        if (random < StrollConfig.mob_grass2dirt) {
-                            world.setBlockState(entityLocation, Blocks.DIRT.getDefaultState());
-                            return;
-                        }
+                if (block == Blocks.GRASS_BLOCK) {
+                    if (random < StrollConfig.mob_grass2dirt) {
+                        world.setBlockState(entityLocation, Blocks.DIRT.getDefaultState());
+                        return;
                     }
-
-                    if (block == Blocks.DIRT)
-                    {
+                }
+                if (StrollConfig.fullPaths) {
+                    if (block == Blocks.DIRT) {
                         if (random < StrollConfig.mob_dirt2path) {
                             world.setBlockState(entityLocation, Blocks.GRASS_PATH.getDefaultState());
 
                             return;
                         }
                     }
-                    if (block == Blocks.GRASS_PATH)
-                    {
+                    if (block == Blocks.GRASS_PATH) {
                         if (random < StrollConfig.mob_path2gravel) {
                             world.setBlockState(entityLocation, Blocks.GRAVEL.getDefaultState());
 
                             return;
                         }
                     }
-                    if (block == Blocks.GRAVEL)
-                    {
+                    if (block == Blocks.GRAVEL) {
                         if (random < StrollConfig.mob_gravel2stone) {
                             world.setBlockState(entityLocation, Blocks.STONE.getDefaultState());
 
                             return;
                         }
                     }
-                    if (block == Blocks.STONE)
-                    {
+                    if (block == Blocks.STONE) {
                         if (random < StrollConfig.mob_stone2stonebricks) {
                             world.setBlockState(entityLocation, Blocks.STONE_BRICKS.getDefaultState());
                         }
                     }
+
                 }
+            }
+
+        }
+
+        @SubscribeEvent
+        public static void makeMobPath(LivingEvent event) {
+
+            if (event.getEntityLiving() != null && StrollConfig.pathMobs) {
+                Entity player = event.getEntityLiving();
+                generatePath(player);
             }
         }
 
@@ -120,55 +118,7 @@ public class OnceUponaStroll
         public static void makePlayerPath(PlayerEvent event) {
             if (event.getPlayer() != null && StrollConfig.pathPlayers) {
                 Entity player = event.getPlayer();
-                BlockPos entityLocation = new BlockPos(player.posX,player.posY+player.getYOffset(), player.posZ);
-                World world = player.getEntityWorld();
-                BlockState state = world.getBlockState(entityLocation);
-                Block block = state.getBlock();
-
-                double random =  Math.random() * StrollConfig.player_upperLimit + StrollConfig.player_lowerLimit;
-
-                if (!world.isRemote && (Math.abs(player.getMotion().getX()) > 0.0D || Math.abs(player.getMotion().getY()) > 0.0D || Math.abs(player.getMotion().getZ()) > 0.0D)) {
-
-
-                    if (block == Blocks.GRASS_BLOCK)
-                    {
-                        if (random < StrollConfig.player_grass2dirt) {
-                            world.setBlockState(entityLocation, Blocks.DIRT.getDefaultState());
-                            return;
-                        }
-                    }
-
-                    if (block == Blocks.DIRT)
-                    {
-                        if (random < StrollConfig.player_dirt2path) {
-                            world.setBlockState(entityLocation, Blocks.GRASS_PATH.getDefaultState());
-
-                            return;
-                        }
-                    }
-                    if (block == Blocks.GRASS_PATH)
-                    {
-                        if (random < StrollConfig.player_path2gravel) {
-                            world.setBlockState(entityLocation, Blocks.GRAVEL.getDefaultState());
-
-                            return;
-                        }
-                    }
-                    if (block == Blocks.GRAVEL)
-                    {
-                        if (random < StrollConfig.player_gravel2stone) {
-                            world.setBlockState(entityLocation, Blocks.STONE.getDefaultState());
-
-                            return;
-                        }
-                    }
-                    if (block == Blocks.STONE)
-                    {
-                        if (random < StrollConfig.player_stone2stonebricks) {
-                            world.setBlockState(entityLocation, Blocks.STONE_BRICKS.getDefaultState());
-                        }
-                    }
-                }
+                generatePath(player);
             }
         }
     }
