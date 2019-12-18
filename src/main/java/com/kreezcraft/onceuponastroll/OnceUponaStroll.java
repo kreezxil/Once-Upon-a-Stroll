@@ -56,7 +56,7 @@ public class OnceUponaStroll {
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class MakePath {
         private static void generatePath(Entity player) {
-            BlockPos entityLocation = new BlockPos(player.posX, player.posY + player.getYOffset(), player.posZ);
+            BlockPos entityLocation = new BlockPos(player.getPosition().getX(), player.getPosition().getY() + player.getYOffset(), player.getPosition().getZ());
             World world = player.getEntityWorld();
             BlockState state = world.getBlockState(entityLocation);
             Block block = state.getBlock();
