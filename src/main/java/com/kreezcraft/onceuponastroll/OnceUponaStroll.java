@@ -56,15 +56,15 @@ public class OnceUponaStroll {
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class MakePath {
         private static void generatePath(Entity player) {
-            BlockPos entityLocation = new BlockPos(player.getPosition().getX(), player.getPosition().getY() + player.getYOffset(), player.getPosition().getZ());
             World world = player.getEntityWorld();
-            BlockState state = world.getBlockState(entityLocation);
-            Block block = state.getBlock();
-
-            double random = Math.random() * StrollConfig.mob_upperLimit + StrollConfig.mob_lowerLimit;
 
             if (!world.isRemote && (Math.abs(player.getMotion().getX()) > 0.0D || Math.abs(player.getMotion().getY()) > 0.0D || Math.abs(player.getMotion().getZ()) > 0.0D)) {
 
+                double random = Math.random() * StrollConfig.mob_upperLimit + StrollConfig.mob_lowerLimit;
+
+                BlockPos entityLocation = new BlockPos(player.getPosition().getX(), player.getPosition().getY() + player.getYOffset(), player.getPosition().getZ());
+                BlockState state = world.getBlockState(entityLocation);
+                Block block = state.getBlock();
 
                 if (block == Blocks.GRASS_BLOCK) {
                     if (random < StrollConfig.mob_grass2dirt) {
