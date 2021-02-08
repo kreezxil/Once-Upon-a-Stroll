@@ -4,21 +4,15 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.MovementInput;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,10 +23,10 @@ public class OnceUponaStroll {
     private static final Logger LOGGER = LogManager.getLogger();
 
     public OnceUponaStroll() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGHEST, MakePath::makePlayerPath);
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGHEST, MakePath::makeMobPath);
+        eventBus.addListener(this::setup);
+
         StrollConfig.init();
     }
 
@@ -40,27 +34,14 @@ public class OnceUponaStroll {
         StrollConfig.load();
     }
 
-    private void doClientStuff(final FMLClientSetupEvent event) {
-    }
-
-    private void enqueueIMC(final InterModEnqueueEvent event) {
-    }
-
-    private void processIMC(final InterModProcessEvent event) {
-    }
-
-    @SubscribeEvent
-    public void onServerStarting(FMLServerStartingEvent event) {
-    }
-
-    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+    @Mod.EventBusSubscriber(modid = "onceuponastroll")
     public static class MakePath {
         private static void generatePath(Entity player) {
             World world = player.getEntityWorld();
 
             if (!world.isRemote && (Math.abs(player.getMotion().getX()) > 0.0D || Math.abs(player.getMotion().getY()) > 0.0D || Math.abs(player.getMotion().getZ()) > 0.0D)) {
 
-                BlockPos entityLocation = new BlockPos(player.posX, player.posY + player.getYOffset(), player.posZ);
+                BlockPos entityLocation = new BlockPos(player.getPosX(), player.getPosY() + player.getYOffset(), player.getPosZ());
                 BlockState state = world.getBlockState(entityLocation);
                 Block block = state.getBlock();
 
@@ -99,22 +80,19 @@ public class OnceUponaStroll {
                             world.setBlockState(entityLocation, Blocks.STONE_BRICKS.getDefaultState());
                         }
                     }
-
                 }
             }
-
         }
 
-        @SubscribeEvent
+        @SubscribeEvent(priority = EventPriority.HIGHEST)
         public static void makeMobPath(LivingEvent event) {
-
             if (event.getEntityLiving() != null && StrollConfig.pathMobs) {
                 Entity player = event.getEntityLiving();
                 generatePath(player);
             }
         }
 
-        @SubscribeEvent
+        @SubscribeEvent(priority = EventPriority.HIGHEST)
         public static void makePlayerPath(PlayerEvent event) {
             if (event.getPlayer() != null && StrollConfig.pathPlayers) {
                 Entity player = event.getPlayer();

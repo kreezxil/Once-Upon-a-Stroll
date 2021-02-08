@@ -1,26 +1,28 @@
 modLoader="javafml" #mandatory
-loaderVersion="[28,)" #mandatory (26 is current forge version)
+loaderVersion="[36,)" #mandatory (26 is current forge version)
 issueTrackerURL="https://github.com/kreezxil/Once-Upon-a-Stroll/issues/" #optional
+license="MIT"
+
 [[mods]] #mandatory
 modId="onceuponastroll" #mandatory
 version="${file.jarVersion}" #mandatory
 displayName="Once Upon A Stroll" #mandatory
 displayURL="https://github.com/kreezxil/Once-Upon-a-Stroll/" #optional
-logoFile="examplemod.png" #optional
+#logoFile="examplemod.png" #optional
 credits="Thanks to no one porting a pathing mod to 1.14.4 but at least putting a public license on their mods." #optional
 authors="Kreezxil" #optional
 description='''
 Traveling on the ground makes paths over time.
 '''
-[[dependencies.examplemod]] #optional
+[[dependencies.onceuponastroll]] #optional
     modId="forge" #mandatory
     mandatory=true #mandatory
-    versionRange="[28,)" #mandatory
+    versionRange="[36,)" #mandatory
     ordering="NONE"
     side="BOTH"
-[[dependencies.examplemod]]
+[[dependencies.onceuponastroll]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.14.4]"
+    versionRange="[1.16.5,]"
     ordering="NONE"
     side="BOTH"
